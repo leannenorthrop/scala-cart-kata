@@ -2,6 +2,7 @@ package org.northrop.leanne.shopping
 
 import org.northrop.leanne.shopping.till._
 
+// $COVERAGE-OFF$
 object Main extends App {
 	def cart(str:String):List[String] = str.split(",").toList.map(s => s.trim.toLowerCase())
 
@@ -42,3 +43,4 @@ object Main extends App {
 	}
 
 }
+// $COVERAGE-ON$

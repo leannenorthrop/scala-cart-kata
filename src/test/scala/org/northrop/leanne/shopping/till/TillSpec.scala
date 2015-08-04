@@ -98,6 +98,14 @@ class TillSpec extends UnitSpec {
 		map("apple") should be === 20
 	}
 
+	it should "return None if input prices string is empty" in {
+		val testString = "    	"
+
+		val till = TillHelper.apply(testString)
+
+		assert(till === None)
+	}
+
 	it should "convert prices string 'orange:y600,apple:20' string to map" in {
 		val testString = "orange:y600,apple:20"
 
@@ -106,6 +114,14 @@ class TillSpec extends UnitSpec {
 		map("orange") should be === 600
 		map("apple") should be === 20
 	}	
+
+	it should "return None if input offers string is empty" in {
+		val testString = "    "
+
+		val till = TillHelper.apply("orange:600,apple:20",testString)
+
+		assert(till === None)
+	}
 
 	it should "convert offers string 'orange:3;400,apple:2;100' string to map" in {
 		val testString = "orange:3;400,apple:2;100"

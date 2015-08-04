@@ -81,7 +81,7 @@ object TillHelper {
 		}
 	}
 	def apply(prices:String,offers:String) : Option[Till] = {
-		if (prices.trim.length > 0) {
+		if (prices.trim.length > 0 && offers.trim.length > 0) {
 			Some(Till(toPriceMap(prices), toOffersMap(offers), Map[String,LineValues]()))
 		} else {
 			None

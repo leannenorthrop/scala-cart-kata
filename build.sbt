@@ -15,4 +15,8 @@ libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.2" 
 
 scalacOptions in (Compile,doc) ++= Seq("-groups", "-implicits", "-doc-title", "Shopping Cart Kata")
 
+coverageMinimum := 80
+
+coverageFailOnMinimum := true
+
 // ScalaDoc guide: https://gist.github.com/VladUreche/8396624
