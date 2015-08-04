@@ -1,6 +1,6 @@
 # scala-cart-kata
 
-Travis CI: ![](https://travis-ci.org/leannenorthrop/markdown-swift.svg?branch=master)
+Travis CI: ![](https://travis-ci.org/leannenorthrop/scala-cart-kata.svg?branch=master)
 
 [Shopping cart kata](http://codekata.com/kata/kata09-back-to-the-checkout/) in Scala to learn about state transitions, sbt, scala-test etc.
 
