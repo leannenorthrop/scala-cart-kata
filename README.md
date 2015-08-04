@@ -1,6 +1,6 @@
 # scala-cart-kata
 
-Travis CI: ![](https://travis-ci.org/leannenorthrop/scala-cart-kata.svg?branch=master)
+![](https://travis-ci.org/leannenorthrop/scala-cart-kata.svg?branch=master)
 
 [Shopping cart kata](http://codekata.com/kata/kata09-back-to-the-checkout/) in Scala to learn about state transitions, sbt, scala-test etc.
 
@@ -32,3 +32,4 @@ sbt run "orange,apple,orange" "orange:50,apple:40,grapes:100,..." "orange:3;100,
 ```
 
 Where offers are a pair of product-name:rule and rule is quantity;price-in-pence.
+
