@@ -21,18 +21,15 @@ case class Till(prices:Map[String,Int], offers:Map[String,String], private val s
 /** Companion object supplying useful functions for operating on shop till. */
 object Till {	
 	/** Returns transition function to lookup price of given product */
-	def purchase(product:String) : ShopTill[Option[Int]] = {
-		till => {
+	def purchase(product:String) : ShopTill[Option[Int]] = till => {
 			val price : Int = till.priceLookup(product)
 			val result = if (price == 0) None else Option(price)
 			(result,till)
-		}
-	}	
+		}	
 
 	/** Returns transition function to caclulate discount 'price' for given product based on current state
 	    of the till's seen products.*/
-	def discount(product:String) : ShopTill[Option[Int]] = {
-		till => {
+	def discount(product:String) : ShopTill[Option[Int]] = till => {
 			var discount : Option[Int] = None
 			val productstate : LineValues = till.productStateLookup(product)
 			val count : Int = productstate._1 + 1
@@ -51,24 +48,15 @@ object Till {
 				case None => discount = None
 			}
 			(discount,updatedTill)
-		}
-	}	
+		}	
 
 	def update(till:Till, product:String, values:LineValues) : Till = Till(till.prices,till.offers,((till.state - product) ++ List(product -> values)))
 }
 
 object TillHelper {
-	def toMap(str:String):Map[String,String] = {
-		val parts = str.toLowerCase().split(",").flatMap(s => s.trim.split(":")).toList
-		val m = parts.sliding(2,2).collect{case List(a,b) => (a,b)}.toList.toMap
-		m
-	}
-
-	def toPriceMap(prices:String):Map[String,Int] = {
-		val m = toMap(prices)
-		m.map({case (key, value) => (key, value.replaceAll("[^\\d]","").toInt)})
-	}
-
+	def toList(str:String):List[String] = str.toLowerCase().split(",").flatMap(s => s.trim.split(":")).toList
+	def toMap(str:String):Map[String,String] = toList(str).sliding(2,2).collect{case List(a,b) => (a,b)}.toList.toMap
+	def toPriceMap(prices:String):Map[String,Int] = toMap(prices).map({case (key, value) => (key, value.replaceAll("[^\\d]","").toInt)})
 	def toOffersMap(offers:String):Map[String,String] = toMap(offers)	
 
 	def apply(prices:String) : Option[Till] = {
