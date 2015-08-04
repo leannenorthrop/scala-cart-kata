@@ -39,14 +39,15 @@ object Till {
 			val price : Int = till.prices.getOrElse(product,0)
 
 			val offerRule : Option[List[Int]] = till.offerLookup(product)
-			if (offerRule != None) {
-				val offerParts = offerRule.get
-				val i = offerParts(0)
-				if (count == i) {
-					val fullprice : Int = price * count
-					discount = Some(offerParts(1) - fullprice)
-					updatedTill = Till.update(till, product, Tuple1[Int](0))
-				}
+			offerRule match { 
+				case Some(offerParts) =>
+					val i = offerParts(0)
+					if (count == i) {
+						val fullprice : Int = price * count
+						discount = Some(offerParts(1) - fullprice)
+						updatedTill = Till.update(till, product, Tuple1[Int](0))
+					}
+				case None => discount = None
 			}
 			(discount,updatedTill)
 		}
