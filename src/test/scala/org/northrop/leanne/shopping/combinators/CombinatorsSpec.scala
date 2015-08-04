@@ -51,4 +51,40 @@ class CombinatorsSpec extends UnitSpec {
 
 		assert(result._1 === testValue3)
 	}
+
+	"Sequence combinator" should "return function returning empty list if provided no transitions" in {
+		val runAll = sequence(List[State[String,Int]]())
+		val result = runAll("")
+
+		assert(result._1.length == 0)
+	}
+
+	it should "return function which returns one result if provided one transition" in {
+		val t1 = mockFunction[String, (Int,String)]
+		t1 expects ("") returning ((1,"T1 Executed")) once
+
+		val runAll = sequence(List[State[String,Int]](t1))
+		val result = runAll("")
+
+		assert(result._1.length == 1)
+		assert(result._1.head == 1)
+	}
+
+	it should "return function which returns all results if provided more than one transition" in {
+		val finalState = "T2 Executed"
+		val t1 = mockFunction[String, (Int,String)]
+		t1 expects ("") returning ((1,"T1 Executed")) once
+
+		val t2 = mockFunction[String, (Int,String)]
+		t2 expects ("T1 Executed") returning ((2,finalState)) once		
+
+		val runAll = sequence(List[State[String,Int]](t1,t2))
+		val result = runAll("")
+
+		val list = result._1
+		assert(list.length == 2)
+		assert(list(0) == 1)
+		assert(list(1) == 2)
+		assert(result._2 === finalState)
+	}	
 }

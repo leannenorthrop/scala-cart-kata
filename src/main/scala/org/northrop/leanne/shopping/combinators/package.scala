@@ -21,4 +21,12 @@ package object combinators {
 			(f(aa,bb), s3)
 		}
 	}	
+
+	/** Returns a state transition which returns a list of results from applying those 
+		transitions in sequence*/
+	def sequence[S,A](fs:List[State[S,A]]):State[S,List[A]] = {
+		val u : State[S, List[A]] = unit(List[A]())
+		val f : (State[S,A],State[S, List[A]]) => State[S,List[A]] = (f,acc) => map2(f,acc)(_ :: _)
+		fs.foldRight(u)(f)
+	}
 }
