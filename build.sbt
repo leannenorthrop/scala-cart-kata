@@ -17,8 +17,13 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 
 scalacOptions in (Compile,doc) ++= Seq("-groups", "-implicits", "-doc-title", "Shopping Cart Kata")
 
-coverageMinimum := 95
+ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 95
 
-coverageFailOnMinimum := true
+ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := false
+
+ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := {
+    if(scalaBinaryVersion.value == "2.11") true
+    else false
+}
 
 // ScalaDoc guide: https://gist.github.com/VladUreche/8396624
