@@ -19,6 +19,11 @@ class CartSpec extends UnitSpec {
       val till = Till(Map[String,Int]("orange"->40), Map[String,String]("orange"->"3;80"), state)
     }
 
+  trait BadTill {
+    val state = Map[String,LineValues]()
+      val till = Till(Map[String,Int]("orange"->40), Map[String,String]("orange"->"3;8f0","apple"->"2;   "), state)
+    }    
+
 	"Buying empty cart" should "return 0" in new NoDiscountTill {
 		val products = List[String]()
     	val cart = Cart(till,products)
@@ -71,5 +76,22 @@ class CartSpec extends UnitSpec {
       val total = cart.buy()
 
       total should be === (2*40+80)/100.0f
-    }         
+    } 
+
+    "Buying 5 oranges" should "return sum of prices in float with discount offer applied ignoring bad character in offer rule" in new BadTill {
+      val products = List[String]("orange","orange","orange","orange","orange")
+      val cart = Cart(till,products)
+
+      val total = cart.buy()
+
+      total should be === (2*40+80)/100.0f
+    }  
+    "Buying 5 oranges" should "return sum of prices in float with empty offer rule" in new BadTill {
+      val products = List[String]("apple","apple","apple","apple","apple")
+      val cart = Cart(till,products)
+
+      val total = cart.buy()
+
+      total should be === 0.0f
+    }                 
 }
