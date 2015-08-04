@@ -2,6 +2,7 @@ package org.northrop.leanne.shopping.till
 
 import org.northrop.leanne.shopping.till._
 import scala.collection.immutable._
+import scala.util.{Try, Success, Failure}
 
 /** Shop till holding current prices, offers and state*/
 case class Till(prices:Map[String,Int], offers:Map[String,String], private val state:Map[String,LineValues]) {
@@ -72,18 +73,14 @@ object TillHelper {
 
 	def apply(prices:String) : Option[Till] = {
 		if (prices.trim.length > 0) {
-			try {
-				Some(Till(toPriceMap(prices), Map[String,String](), Map[String,LineValues]()))
-			} catch {
-				case _ : Throwable => None
-			}
+			Try(Till(toPriceMap(prices), Map[String,String](), Map[String,LineValues]())).toOption
 		} else {
 			None
 		}
 	}
 	def apply(prices:String,offers:String) : Option[Till] = {
 		if (prices.trim.length > 0 && offers.trim.length > 0) {
-			Some(Till(toPriceMap(prices), toOffersMap(offers), Map[String,LineValues]()))
+			Try(Till(toPriceMap(prices), toOffersMap(offers), Map[String,LineValues]())).toOption
 		} else {
 			None
 		}
