@@ -8,7 +8,11 @@ case class Till(prices:Map[String,Int], offers:Map[String,String], private val s
 	def priceLookup(product:String) : Int = this.prices.getOrElse(product,0)
 	def offerLookup(product:String) : Option[List[Int]] = {
 		if (this.offers.getOrElse(product, "") == "") None 
-		else Some(this.offers.getOrElse(product, "").split(",").toList.map(_.toInt))
+		else 
+			Some(this.offers.getOrElse(product, "").split(";").toList.map({ s =>
+				val str = s.replaceAll("[^\\d]","")
+				if (str.trim.length == 0) 0 else str.toInt
+			}))
 	}
 	def productStateLookup(product:String) : LineValues = this.state.getOrElse(product,Tuple1[Int](0))
 }
@@ -49,4 +53,38 @@ object Till {
 	}	
 
 	def update(till:Till, product:String, values:LineValues) : Till = Till(till.prices,till.offers,((till.state - product) ++ List(product -> values)))
+}
+
+object TillHelper {
+	def toMap(str:String):Map[String,String] = {
+		val parts = str.toLowerCase().split(",").flatMap(s => s.trim.split(":")).toList
+		val m = parts.sliding(2,2).collect{case List(a,b) => (a,b)}.toList.toMap
+		m
+	}
+
+	def toPriceMap(prices:String):Map[String,Int] = {
+		val m = toMap(prices)
+		m.map({case (key, value) => (key, value.replaceAll("[^\\d]","").toInt)})
+	}
+
+	def toOffersMap(offers:String):Map[String,String] = toMap(offers)	
+
+	def apply(prices:String) : Option[Till] = {
+		if (prices.trim.length > 0) {
+			try {
+				Some(Till(toPriceMap(prices), Map[String,String](), Map[String,LineValues]()))
+			} catch {
+				case _ : Throwable => None
+			}
+		} else {
+			None
+		}
+	}
+	def apply(prices:String,offers:String) : Option[Till] = {
+		if (prices.trim.length > 0) {
+			Some(Till(toPriceMap(prices), toOffersMap(offers), Map[String,LineValues]()))
+		} else {
+			None
+		}
+	}	
 }

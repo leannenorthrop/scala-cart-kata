@@ -51,7 +51,7 @@ class TillSpec extends UnitSpec {
 
 	"Till discount a known product" should "return None if discount can not be applied for product" in {
 		val grapesPrice = 300
-		val till = Till(Map[String,Int]("grapes"->grapesPrice), Map[String,String]("grapes"->"3,130"), Map[String,LineValues]())
+		val till = Till(Map[String,Int]("grapes"->grapesPrice), Map[String,String]("grapes"->"3;130"), Map[String,LineValues]())
 
 		val discountedGrapes = Till.discount("grapes")
 		val result = discountedGrapes(till)
@@ -61,7 +61,7 @@ class TillSpec extends UnitSpec {
 
 	it should "return till transition function which return Some discount amount in pence" in {
 		val grapesPrice = 300
-		val till = Till(Map[String,Int]("grapes"->grapesPrice), Map[String,String]("grapes"->"3,130"), Map[String,LineValues]())
+		val till = Till(Map[String,Int]("grapes"->grapesPrice), Map[String,String]("grapes"->"3;130"), Map[String,LineValues]())
 
 		val discountedGrapes = List[String]("grapes","grapes","grapes").flatMap( i => List(Till.discount(i)) )
 		val result = sequence(discountedGrapes)(till)
@@ -72,11 +72,68 @@ class TillSpec extends UnitSpec {
 
 	it should "return None if no discount is available for product" in {
 		val grapesPrice = 300
-		val till = Till(Map[String,Int]("grapes"->grapesPrice), Map[String,String]("grapes"->"3,130"), Map[String,LineValues]())
+		val till = Till(Map[String,Int]("grapes"->grapesPrice), Map[String,String]("grapes"->"3;130"), Map[String,LineValues]())
 
 		val discountedGrapes = Till.discount("orange")
 		val result = discountedGrapes(till)
 		
 		result._1 should be === None		
 	}
+
+	"TillHelper" should "convert 'abc:def,xyz:aaa' string to map" in {
+		val testString = "ABC:DEF,XYZ:AAA"
+
+		val map = TillHelper.toMap(testString)
+
+		map("abc") should be === "def"
+		map("xyz") should be === "aaa"
+	}
+
+	"TillHelper" should "convert prices string 'orange:600,apple:20' string to map" in {
+		val testString = "orange:600,apple:20"
+
+		val map = TillHelper.toPriceMap(testString)
+
+		map("orange") should be === 600
+		map("apple") should be === 20
+	}
+
+	it should "convert prices string 'orange:y600,apple:20' string to map" in {
+		val testString = "orange:y600,apple:20"
+
+		val map = TillHelper.toPriceMap(testString)
+
+		map("orange") should be === 600
+		map("apple") should be === 20
+	}	
+
+	it should "convert offers string 'orange:3;400,apple:2;100' string to map" in {
+		val testString = "orange:3;400,apple:2;100"
+
+		val map = TillHelper.toOffersMap(testString)
+
+		map("orange") should be === "3;400"
+		map("apple") should be === "2;100"
+	}		
+
+	it should "create till for given prices" in {
+		val prices = "orange:600,apple:20"
+
+		val till = TillHelper(prices)
+
+		assert(till != None)
+		till.get.priceLookup("orange") should be === 600
+	}
+
+	it should "create till for given prices and offers" in {
+		val prices = "orange:600,apple:20"
+		val offers = "orange:3;400,apple:2;100"
+
+		val till = TillHelper(prices,offers)
+
+		assert(till != None)
+		till.get.priceLookup("orange") should be === 600
+		till.get.offerLookup("orange").get(0) should be === 3
+		till.get.offerLookup("orange").get(1) should be === 400
+	}		
 }
