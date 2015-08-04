@@ -6,8 +6,9 @@ import org.northrop.leanne.shopping.till._
 case class Cart(private val till:Till, private val cart:List[String]) {
 	import org.northrop.leanne.shopping.combinators._
 
+	/** Returns total charge for cart contents as a float.*/
 	def buy() : Float = {
-		val l : List[ShopTill[Option[Int]]] = cart.flatMap( i => List(Till.purchase(i)) )
+		val l : List[ShopTill[Option[Int]]] = cart.flatMap( i => List(Till.purchase(i),Till.discount(i)) )
 		val (list,_) = sequence(l)(till)
 		val total : Int = list.flatten.foldLeft(Some(0))((acc,i)=>Some(acc.getOrElse(0)+i)).getOrElse(0)
 		total/100.0f

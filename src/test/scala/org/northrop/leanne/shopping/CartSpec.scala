@@ -10,7 +10,8 @@ import scala.collection.immutable._
 */
 class CartSpec extends UnitSpec {
 	trait NoDiscountTill {
-    	val till = Till(Map[String,Int]("orange"->40), Map[String,String](), Map[String,(Int)]())
+		val state = Map[String,LineValues]()
+    	val till = Till(Map[String,Int]("orange"->40), Map[String,String]("orange"->"3,80"), state)
   	}
 
 	"Buying empty cart" should "return 0" in new NoDiscountTill {
@@ -40,12 +41,30 @@ class CartSpec extends UnitSpec {
     	total should be === 0.4f
   	} 
 
-  	 "Buying many oranges" should "return sum of prices in float" in new NoDiscountTill {
-		val products = List[String]("orange","orange","orange")
+  	"Buying 2 oranges" should "return sum of prices in float" in new NoDiscountTill {
+		  val products = List[String]("orange","orange")
     	val cart = Cart(till,products)
 
     	val total = cart.buy()
 
-    	total should be === (3*40)/100.0f
+    	total should be === (2*40)/100.0f
   	} 
+
+    "Buying 3 oranges" should "return sum of prices in float with discount offer applied" in new NoDiscountTill {
+      val products = List[String]("orange","orange","orange")
+      val cart = Cart(till,products)
+
+      val total = cart.buy()
+
+      total should be === 80/100.0f
+    } 
+
+    "Buying 5 oranges" should "return sum of prices in float with discount offer applied" in new NoDiscountTill {
+      val products = List[String]("orange","orange","orange","orange","orange")
+      val cart = Cart(till,products)
+
+      val total = cart.buy()
+
+      total should be === (2*40+80)/100.0f
+    }         
 }
