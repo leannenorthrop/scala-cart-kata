@@ -17,7 +17,7 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 
 scalacOptions in (Compile,doc) ++= Seq("-groups", "-implicits", "-doc-title", "Shopping Cart Kata")
 
-coverageMinimum := 80
+coverageMinimum := 95
 
 coverageFailOnMinimum := true
 
