@@ -12,10 +12,13 @@ class MainSpec extends UnitSpec {
     val app = Main
   }
 
-  "Main entry point" should "exist" in new MainObject {
+  "Main entry point" should "print usage instructions" in new MainObject {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]()
+      val expectedMsg = """Usage:
+              |scala org.northrop.leanne.shoppingcart.Main 'comma separated list of products to purchase'
+              |""".stripMargin + "\n"
 
       // do it
       Console.withOut(stream) {
@@ -23,6 +26,6 @@ class MainSpec extends UnitSpec {
       }
 
       // check
-      stream.toString shouldBe "hello world\n"
+      stream.toString shouldBe expectedMsg
   }
 }
