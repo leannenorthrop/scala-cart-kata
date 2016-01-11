@@ -29,11 +29,26 @@ class MainSpec extends UnitSpec {
       stream.toString shouldBe expectedMsg
   }
 
-  "Main entry point" should "print 0 total price for first argument" in new MainObject {
+  "Main entry point" should "print formatted total price of 0 for list of unknown items" in new MainObject {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
-      val args = Array[String]("something-to-buy")
-      val expectedMsg = "Total = 0\n"
+      val args = Array[String]("something-to-buy, , top")
+      val expectedMsg = "Total = 0.00\n"
+
+      // do it
+      Console.withOut(stream) {
+        app.main(args)
+      }
+
+      // check
+      stream.toString shouldBe expectedMsg
+  }
+
+  "Main entry point" should "print formatted total price for list of known items" in new MainObject {
+      // setup
+      val stream = new java.io.ByteArrayOutputStream()
+      val args = Array[String]("apple, apple, something, , orange, apple")
+      val expectedMsg = "Total = 2.00\n"
 
       // do it
       Console.withOut(stream) {
