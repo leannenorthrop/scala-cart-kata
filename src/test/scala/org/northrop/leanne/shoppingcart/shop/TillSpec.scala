@@ -1,6 +1,7 @@
 package org.northrop.leanne.shoppingcart.shop
 
 import org.northrop.leanne.UnitSpec
+import scala.collection.immutable._
 
 /**
     Behaviour tests for org.northrop.leanne.shoppingcart.shop.Till
@@ -65,5 +66,17 @@ class TillSpec extends UnitSpec {
 
       // check
       total shouldBe 119
+  }
+
+  "Offer" should "initial with name and condition" in {
+      // setup
+      val name = "Apples ~ Buy 1 Get 1 Free"
+      val condition = Map(Product("apple") -> 2)
+      val offer = Offer(name, condition)
+
+      // check
+      offer.name shouldBe name
+      offer.conditions shouldBe condition
+
   }
 }
