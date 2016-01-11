@@ -9,7 +9,7 @@ import scala.collection.immutable._
 class CartSpec extends UnitSpec {
   "Cart" should "initialise with list of Products" in {
       // setup
-      val contents = Product("something") :: Product("something-else") :: List()
+      val contents = Product("apple") :: Product("orange") :: List()
 
       // check
       Cart(contents).contents shouldBe contents
