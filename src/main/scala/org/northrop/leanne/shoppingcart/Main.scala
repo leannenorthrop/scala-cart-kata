@@ -4,7 +4,9 @@ import org.northrop.leanne.shoppingcart.shop._
 import scala.collection.immutable._
 
 object Main {
-  private val till = Till(ProductPrice(Product("apple"), 60) :: ProductPrice(Product("orange"), 25) :: List())
+  private val prices = ProductPrice(Product("apple"), 60) :: ProductPrice(Product("orange"), 25) :: List()
+  private val offers = List[Offer]()
+  private val till = Till(prices, offers)
   private val scanner = Till.scan(till)_
 
   def main(args: Array[String]): Unit = args.length match {

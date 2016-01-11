@@ -9,13 +9,22 @@ import scala.collection.immutable._
 class TillSpec extends UnitSpec {
   trait TillWithoutOrangePriceObjects {
     val prices = ProductPrice(Product("apple"), 33) :: List()
-    val till = Till(prices)
+    val offers = List()
+    val till = Till(prices, offers)
     val scanner = Till.scan(till)_
   }
 
   trait TillObjects {
     val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: List()
-    val till = Till(prices)
+    val offers = List()
+    val till = Till(prices, offers)
+    val scanner = Till.scan(till)_
+  }
+
+  trait TillWithOffersObjects {
+    val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: List()
+    val offers = Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -33) :: List()
+    val till = Till(prices, offers)
     val scanner = Till.scan(till)_
   }
 
@@ -72,11 +81,41 @@ class TillSpec extends UnitSpec {
       // setup
       val name = "Apples ~ Buy 1 Get 1 Free"
       val condition = Map(Product("apple") -> 2)
-      val offer = Offer(name, condition)
+      val offer = Offer(name, condition, -33)
 
       // check
       offer.name shouldBe name
       offer.conditions shouldBe condition
+      offer.discountInPence shouldBe -33
+  }
 
+  "Till lookupOfferDiscount" should "return None if no offers apply" in new TillWithOffersObjects {
+      // do it
+      val offerOption = till.lookupOfferDiscount(List(), Product("apple"))
+
+      // check
+      offerOption shouldBe None
+  }
+
+  "Till lookupOfferDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
+      // set up
+      val productList = Product("apple") :: Product("apple") :: List()
+
+      // do it
+      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((List(),0))
+
+      // check
+      discountInPence shouldBe -33
+  }
+
+  "Till lookupOfferDiscount" should "return new state if offer applies" in new TillWithOffersObjects {
+      // set up
+      val productList = Product("apple") :: Product("orange") :: Product("apple") :: List()
+      
+      // do it
+      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((List(),0))
+
+      // check
+      newState shouldBe List(Product("orange"))
   }
 }
