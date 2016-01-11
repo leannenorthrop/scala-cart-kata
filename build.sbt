@@ -1,10 +1,5 @@
+name := "My Project"
 
-// Set the project name to the string 'My Project'
-name := "Shopping Cart Kata"
-
-// The := method used in Name and Version is one of two fundamental methods.
-// The other method is <<=
-// All other initialization methods are implemented in terms of these.
 version := "1.0"
 
 scalaVersion := "2.11.7"
@@ -25,5 +20,3 @@ ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := {
     if(scalaBinaryVersion.value == "2.11") true
     else false
 }
-
-// ScalaDoc guide: https://gist.github.com/VladUreche/8396624
