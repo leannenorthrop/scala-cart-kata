@@ -5,5 +5,6 @@ object Main {
     case 0 => println("""Usage:
               |scala org.northrop.leanne.shoppingcart.Main 'comma separated list of products to purchase'
               |""".stripMargin)
+    case 1 => println("Total = 0")
   }
 }

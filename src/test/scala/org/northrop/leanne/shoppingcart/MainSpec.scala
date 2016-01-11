@@ -28,4 +28,19 @@ class MainSpec extends UnitSpec {
       // check
       stream.toString shouldBe expectedMsg
   }
+
+  "Main entry point" should "print 0 total price for first argument" in new MainObject {
+      // setup
+      val stream = new java.io.ByteArrayOutputStream()
+      val args = Array[String]("something-to-buy")
+      val expectedMsg = "Total = 0\n"
+
+      // do it
+      Console.withOut(stream) {
+        app.main(args)
+      }
+
+      // check
+      stream.toString shouldBe expectedMsg
+  }
 }
