@@ -15,4 +15,12 @@ class TillSpec extends UnitSpec {
       productPrice.product.name shouldBe name
       productPrice.priceInPence shouldBe 100
   }
+
+  "Till" should "initialise with List of ProductPrices" in {
+      // setup
+      val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"),44) :: List()
+
+      // check
+      Till(prices).prices shouldBe prices
+  }
 }
