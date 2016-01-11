@@ -12,7 +12,7 @@ class MainSpec extends UnitSpec {
     val app = Main
   }
 
-  "Main entry point" should "print usage instructions" in new MainObject {
+  "Main entry point" should "print usage instructions when no arguments supplied" in new MainObject {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]()
