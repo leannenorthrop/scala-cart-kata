@@ -43,4 +43,19 @@ class MainSpec extends UnitSpec {
       // check
       stream.toString shouldBe expectedMsg
   }
+
+  "Main entry point" should "print 0 total price and warning for additional parameters" in new MainObject {
+      // setup
+      val stream = new java.io.ByteArrayOutputStream()
+      val args = Array[String]("something-to-buy", "extra-item", "further-item")
+      val expectedMsg = "Total = 0. Don't know what to do with additional arguments: extra-item, further-item\n"
+
+      // do it
+      Console.withOut(stream) {
+        app.main(args)
+      }
+
+      // check
+      stream.toString shouldBe expectedMsg
+  }
 }
