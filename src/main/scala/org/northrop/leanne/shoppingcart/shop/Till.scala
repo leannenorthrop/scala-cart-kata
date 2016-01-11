@@ -30,6 +30,17 @@ case class Till(val prices : List[ProductPrice], val offers: List[Offer]) {
 
 object Till {
   def scan(till:Till)(cart:Cart) : Int = {
-    cart.contents.map(product => product.flatMap((product) => till.lookupPrice(product))).filter(_!=None).map(_.getOrElse(0)).foldLeft(0)(_ + _)
+    val mapOfProducts = cart.contents.filter(_!=None).map(_.get)
+
+    val initialRunningState : Tuple2[List[Product],Int] = Tuple2(List[Product](), 0)
+    val (_, total) = mapOfProducts.foldLeft( initialRunningState ) { 
+      (runningState,product) =>
+
+      val (newRunningState, discountInPence) = till.lookupOfferDiscount(runningState._1, product).getOrElse(runningState._1, 0)
+
+      (newRunningState, runningState._2 + till.lookupPrice(product).map(_ + discountInPence).getOrElse(0))
+    }
+
+    total
   }
 }
