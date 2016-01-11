@@ -1,5 +1,10 @@
 package org.northrop.leanne.shoppingcart.shop
 
 import scala.collection.immutable._
+import scala.util._
 
-case class Cart(val contents : List[Product])
+case class Cart(val contents : List[Option[Product]])
+
+object Cart {
+  def apply(productsCSV:String):Cart = new Cart(productsCSV.split(",").map((name) => Try[Product](Product(name.trim)).toOption).toList)
+}

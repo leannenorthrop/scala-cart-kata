@@ -9,9 +9,20 @@ import scala.collection.immutable._
 class CartSpec extends UnitSpec {
   "Cart" should "initialise with list of Products" in {
       // setup
-      val contents = Product("apple") :: Product("orange") :: List()
+      val contents = Some(Product("apple")) :: Some(Product("orange")) :: List()
 
       // check
       Cart(contents).contents shouldBe contents
+  }
+
+  "Cart apply" should "convert comma separated products into Cart with List of Products" in {
+      // setup
+      val itemsToBuy = "something, apple, , orange, an unknown thing"
+
+      // do it
+      val cart = Cart(itemsToBuy)
+
+      // check
+      cart.contents shouldBe List(None, Some(Product("apple")), None, Some(Product("orange")), None)
   }
 }
