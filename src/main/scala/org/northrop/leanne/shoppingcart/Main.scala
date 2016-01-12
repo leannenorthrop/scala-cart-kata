@@ -14,6 +14,6 @@ object Main {
               |scala org.northrop.leanne.shoppingcart.Main 'comma separated list of products to purchase'
               |""".stripMargin)
     case 1 => println(f"Total = ${scanner(Cart(args(0)))/100}%.2f")
-    case _ => println("Total = 0. Don't know what to do with additional arguments: " + args.splitAt(1)._2.deep.mkString(", "))
+    case _ => println(f"Total = ${scanner(Cart(args(0)))/100}%.2f.\nDon't know what to do with additional arguments: " + args.splitAt(1)._2.deep.mkString(", "))
   }
 }
