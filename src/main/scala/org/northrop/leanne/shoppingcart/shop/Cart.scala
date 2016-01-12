@@ -6,5 +6,7 @@ import scala.util._
 case class Cart(val contents : List[Option[Product]])
 
 object Cart {
+
+  // Todo: Error list of unknown products
   def apply(productsCSV:String):Cart = new Cart(productsCSV.split(",").map((name) => Try[Product](Product(name.trim)).toOption).toList)
 }
