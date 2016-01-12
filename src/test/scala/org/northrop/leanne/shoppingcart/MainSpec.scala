@@ -48,7 +48,7 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("apple, apple, something, , orange, apple")
-      val expectedMsg = "Total = 2.05\n"
+      val expectedMsg = "Total = 1.45\n"
 
       // do it
       Console.withOut(stream) {
