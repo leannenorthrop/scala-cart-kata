@@ -91,7 +91,7 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return None if no offers apply" in new TillWithOffersObjects {
       // do it
-      val offerOption = till.lookupOfferDiscount(Nil, Product("apple"))
+      val offerOption = till.lookupOfferDiscount(TillState(Nil, Nil, 0), Product("apple"))
 
       // check
       offerOption shouldBe None
@@ -99,10 +99,12 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
       // set up
-      val productList = Product("apple") :: Product("apple") :: Nil
+      val allProductsSeen = Product("apple") :: Product("apple") :: Nil
+      val discountedProductsSeen = Product("apple") :: Product("apple") :: Nil
+      val tillState = TillState(allProductsSeen, discountedProductsSeen, 0)
 
       // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((Nil,0))
+      val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
 
       // check
       discountInPence shouldBe -33
@@ -110,13 +112,15 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return new state if offer applies" in new TillWithOffersObjects {
       // set up
-      val productList = Product("apple") :: Product("orange") :: Product("apple") :: Nil
-      
+      val allProductsSeen = Product("apple") :: Product("orange") :: Nil
+      val discountedProductsSeen = Product("apple") :: Product("orange") :: Nil
+      val tillState = TillState(allProductsSeen, discountedProductsSeen, 0)
+
       // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((Nil,0))
+      val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
 
       // check
-      newState shouldBe List(Product("orange"))
+      newState.seenNonOfferProducts shouldBe List(Product("orange"))
   }
 
   "TillState" should "initialise with lists and total price in pence" in {
@@ -131,8 +135,8 @@ class TillSpec extends UnitSpec {
                             runningTotalInPence)
   
       // check
-      state.runningTotalInPence shouldBe runningTotalInPence
-      state.runningSeenNonDiscountedProducts shouldBe runningSeenNonDiscountedProducts
-      state.runningSeenProducts shouldBe runningSeenProducts
+      state.totalInPence shouldBe runningTotalInPence
+      state.seenNonOfferProducts shouldBe runningSeenNonDiscountedProducts
+      state.seenProducts shouldBe runningSeenProducts
   }
 }
