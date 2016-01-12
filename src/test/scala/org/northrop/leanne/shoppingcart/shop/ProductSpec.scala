@@ -14,7 +14,15 @@ class ProductSpec extends UnitSpec {
       Product(name).name shouldBe name
   }
 
-  "Product" should "not construct for uknown items" in {
+  "Product" should "initialise with known item name ignoring case" in {
+      // setup
+      val name = "ApPle"
+
+      // check
+      Product(name).name shouldBe name
+  }
+
+  "Product" should "not construct for unknown items" in {
       // set up
       val name = "unknown product name"
 

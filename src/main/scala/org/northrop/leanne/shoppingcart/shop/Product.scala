@@ -7,5 +7,5 @@ case class Product(val name : String) {
 object Product {
   val validProducts = Array("apple", "orange")
 
-  def isKnown(name : String) : Boolean = validProducts.contains(name)
+  def isKnown(name : String) : Boolean = validProducts.contains(name.toLowerCase)
 }
