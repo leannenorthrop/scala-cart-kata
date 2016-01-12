@@ -14,23 +14,12 @@ Create coverage report:
 ```
 sbt coverageReport
 ```
+
 ## Run
 For shop with just oranges and apples:
 
 ```
-sbt run "orange,apple,orange"
-```
-For a more extensive shop:
-
-```
-sbt run "orange,apple,orange" "orange:50,apple:40,grapes:100,..."
+sbt clean compile "run orange,apple,orange"
 ```
 
-For a more extensive shop with offers:
-
-```
-sbt run "orange,apple,orange" "orange:50,apple:40,grapes:100,..." "orange:3;100,apple:2;60"
-```
-
-Where offers are a pair of product-name:rule and rule is quantity;price-in-pence.
 

@@ -20,3 +20,5 @@ ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := {
     if(scalaBinaryVersion.value == "2.11") true
     else false
 }
+
+mainClass in (Compile, run) := Some("org.northrop.leanne.shoppingcart.Main")
