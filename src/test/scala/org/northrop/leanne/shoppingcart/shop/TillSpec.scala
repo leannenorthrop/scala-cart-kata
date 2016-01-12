@@ -74,7 +74,7 @@ class TillSpec extends UnitSpec {
       val cart = Cart(cartContents)
 
       // do it
-      val total = scanner(cart)
+      val (_, total) = scanner(cart)
 
       // check
       total shouldBe 119
@@ -94,7 +94,7 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return None if no offers apply" in new TillWithOffersObjects {
       // do it
-      val offerOption = till.lookupOfferDiscount(TillState(Nil, Nil, 0), Product("apple"))
+      val offerOption = till.lookupOfferDiscount(TillState(Nil, Nil, List.empty[String], 0), Product("apple"))
 
       // check
       offerOption shouldBe None
@@ -104,7 +104,7 @@ class TillSpec extends UnitSpec {
       // set up
       val allProductsSeen = Product("apple") :: Product("apple") :: Nil
       val discountedProductsSeen = Product("apple") :: Nil
-      val tillState = TillState(allProductsSeen, discountedProductsSeen, 0)
+      val tillState = TillState(allProductsSeen, discountedProductsSeen, List.empty[String], 0)
 
       // do it
       val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
@@ -117,7 +117,7 @@ class TillSpec extends UnitSpec {
       // set up
       val allProductsSeen = Product("apple") :: Product("apple") :: Nil
       val discountedProductsSeen = Product("apple") :: Nil
-      val tillState = TillState(allProductsSeen, discountedProductsSeen, 0)
+      val tillState = TillState(allProductsSeen, discountedProductsSeen, List.empty[String], 0)
 
       // do it
       val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
@@ -135,6 +135,7 @@ class TillSpec extends UnitSpec {
       // do it
       val state = TillState(runningSeenProducts, 
                             runningSeenNonDiscountedProducts,
+                            List.empty[String], 
                             runningTotalInPence)
   
       // check
@@ -149,9 +150,21 @@ class TillSpec extends UnitSpec {
       val cart = Cart(cartContents)
 
       // do it
-      val total = scanner(cart)
+      val (_, total) = scanner(cart)
 
       // check
       total shouldBe (applePrice * 2 + orangePrice * 3)
+  }
+
+  "Till scan" should "return error for valid products without prices" in new TillWithoutOrangePriceObjects {
+      // setup
+      val cartContents = "apple, abc, orange, apple, apple"
+      val cart = Cart(cartContents)
+
+      // do it
+      val (errors, _) = scanner(cart)
+
+      // check
+      errors shouldBe List("No price for product Product(orange).")
   }
 }

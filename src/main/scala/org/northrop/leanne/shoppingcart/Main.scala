@@ -13,7 +13,14 @@ object Main {
     case 0 => println("""Usage:
               |scala org.northrop.leanne.shoppingcart.Main 'comma separated list of products to purchase'
               |""".stripMargin)
-    case 1 => println(f"Total = ${scanner(Cart(args(0)))/100}%.2f")
-    case _ => println(f"Total = ${scanner(Cart(args(0)))/100}%.2f.\nDon't know what to do with additional arguments: " + args.splitAt(1)._2.deep.mkString(", "))
+    case 1 => 
+      val (errors, total) = scanner(Cart(args(0)))
+      println(f"Total = ${total/100d}%.2f")
+      if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n"))
+    case _ => 
+      val (errors, total) = scanner(Cart(args(0)))
+      println(f"Total = ${total/100d}%.2f")
+      if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n"))
+      println("Don't know what to do with additional arguments: " + args.splitAt(1)._2.deep.mkString(", "))
   }
 }

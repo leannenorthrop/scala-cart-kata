@@ -8,6 +8,7 @@ case class Offer(val name: String, val conditions:Map[Product,Int], val discount
 
 case class TillState(val seenProducts: List[Product], 
                      val seenNonOfferProducts: List[Product],
+                     val errors: List[String],
                      val totalInPence: Int)
 
 
@@ -41,19 +42,22 @@ case class Till(val prices : List[ProductPrice], val offers: List[Offer]) {
 
 
 object Till {
-  def scan(till:Till)(cart:Cart) : Int = {
+  def scan(till:Till)(cart:Cart) : (List[String], Int) = {
     val mapOfProducts = cart.contents.filter(_!=None).map(_.get)
 
-    val initialRunningState = TillState(List.empty[Product], List.empty[Product], 0)
-    val total = mapOfProducts.foldLeft( initialRunningState ) { 
+    val initialRunningState = TillState(List.empty[Product], List.empty[Product], List.empty[String], 0)
+    val finalState = mapOfProducts.foldLeft( initialRunningState ) { 
       (runningState,product) =>
       val (newRunningState,discountInPence) = till.lookupOfferDiscount(runningState, product).getOrElse((runningState.copy(seenNonOfferProducts = product :: runningState.seenNonOfferProducts), 0))
-      val newTotal = runningState.totalInPence + till.lookupPrice(product).map(_ + discountInPence).getOrElse(0)
+      val productPriceOption = till.lookupPrice(product).map(_ + discountInPence)
+      val updatedErrors = if (productPriceOption == None) s"No price for product $product." :: runningState.errors else runningState.errors
+      val newTotal = runningState.totalInPence + productPriceOption.getOrElse(0)
 
       newRunningState.copy(seenProducts = (product :: runningState.seenProducts),
-                           totalInPence = newTotal)
-    }.totalInPence
+                           totalInPence = newTotal,
+                           errors = updatedErrors)
+    }
 
-    total
+    (finalState.errors, finalState.totalInPence)
   }
 }
