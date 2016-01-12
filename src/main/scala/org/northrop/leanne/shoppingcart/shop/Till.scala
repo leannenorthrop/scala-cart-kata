@@ -18,7 +18,7 @@ case class Till(val prices : List[ProductPrice], val offers: List[Offer]) {
     }
 
     def applyOfferToState(offer:Offer, state: List[Product]) : List[Product] = {
-      val newState : List[Product] = List[Product]()
+      val newState : List[Product] = List.empty[Product]
       offer.conditions.foldLeft(newState)( (l, entry) => 
         state.partition(_ == entry._1)._1.drop(entry._2) ++ state.partition(_ == entry._1)._2 ++ l
       )
@@ -32,7 +32,7 @@ object Till {
   def scan(till:Till)(cart:Cart) : Int = {
     val mapOfProducts = cart.contents.filter(_!=None).map(_.get)
 
-    val initialRunningState : Tuple2[List[Product],Int] = Tuple2(List[Product](), 0)
+    val initialRunningState : Tuple2[List[Product],Int] = Tuple2(List.empty[Product], 0)
     val (_, total) = mapOfProducts.foldLeft( initialRunningState ) { 
       (runningState,product) =>
 
