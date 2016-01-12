@@ -47,11 +47,10 @@ object Till {
     val initialRunningState = TillState(List.empty[Product], List.empty[Product], 0)
     val total = mapOfProducts.foldLeft( initialRunningState ) { 
       (runningState,product) =>
-
-      val (newRunningState,discountInPence) = till.lookupOfferDiscount(runningState, product).getOrElse((runningState, 0))
+      val (newRunningState,discountInPence) = till.lookupOfferDiscount(runningState, product).getOrElse((runningState.copy(seenNonOfferProducts = product :: runningState.seenNonOfferProducts), 0))
       val newTotal = runningState.totalInPence + till.lookupPrice(product).map(_ + discountInPence).getOrElse(0)
 
-      newRunningState.copy(seenProducts = product :: runningState.seenProducts,
+      newRunningState.copy(seenProducts = (product :: runningState.seenProducts),
                            totalInPence = newTotal)
     }.totalInPence
 
