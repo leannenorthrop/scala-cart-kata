@@ -8,22 +8,22 @@ import scala.collection.immutable._
 */
 class TillSpec extends UnitSpec {
   trait TillWithoutOrangePriceObjects {
-    val prices = ProductPrice(Product("apple"), 33) :: List()
-    val offers = List()
+    val prices = ProductPrice(Product("apple"), 33) :: Nil
+    val offers = List.empty[Offer]
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
   }
 
   trait TillObjects {
-    val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: List()
-    val offers = List()
+    val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: Nil
+    val offers = List.empty[Offer]
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
   }
 
   trait TillWithOffersObjects {
-    val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: List()
-    val offers = Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -33) :: List()
+    val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: Nil
+    val offers = Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -33) :: Nil
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
   }
@@ -91,7 +91,7 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return None if no offers apply" in new TillWithOffersObjects {
       // do it
-      val offerOption = till.lookupOfferDiscount(List(), Product("apple"))
+      val offerOption = till.lookupOfferDiscount(Nil, Product("apple"))
 
       // check
       offerOption shouldBe None
@@ -99,10 +99,10 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
       // set up
-      val productList = Product("apple") :: Product("apple") :: List()
+      val productList = Product("apple") :: Product("apple") :: Nil
 
       // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((List(),0))
+      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((Nil,0))
 
       // check
       discountInPence shouldBe -33
@@ -110,12 +110,29 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return new state if offer applies" in new TillWithOffersObjects {
       // set up
-      val productList = Product("apple") :: Product("orange") :: Product("apple") :: List()
+      val productList = Product("apple") :: Product("orange") :: Product("apple") :: Nil
       
       // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((List(),0))
+      val (newState, discountInPence) = till.lookupOfferDiscount(productList, Product("apple")).getOrElse((Nil,0))
 
       // check
       newState shouldBe List(Product("orange"))
+  }
+
+  "TillState" should "initialise with lists and total price in pence" in {
+      // set up
+      val runningTotalInPence = 976
+      val runningSeenNonDiscountedProducts = Product("apple") :: Product("orange") :: Nil
+      val runningSeenProducts = Product("apple") :: Product("apple") :: Product("apple") :: Product("orange") :: Nil
+
+      // do it
+      val state = TillState(runningSeenProducts, 
+                            runningSeenNonDiscountedProducts,
+                            runningTotalInPence)
+  
+      // check
+      state.runningTotalInPence shouldBe runningTotalInPence
+      state.runningSeenNonDiscountedProducts shouldBe runningSeenNonDiscountedProducts
+      state.runningSeenProducts shouldBe runningSeenProducts
   }
 }

@@ -4,6 +4,9 @@ import scala.collection.immutable._
 
 case class ProductPrice(val product : Product, val priceInPence : Int)
 case class Offer(val name: String, val conditions:Map[Product,Int], val discountInPence : Int)
+case class TillState(val runningSeenProducts: List[Product], 
+                     val runningSeenNonDiscountedProducts: List[Product],
+                     val runningTotalInPence: Int)
 
 case class Till(val prices : List[ProductPrice], val offers: List[Offer]) {
   def lookupPrice(product : Product) : Option[Int] = prices.find(_.product.name == product.name).map(_.priceInPence)
