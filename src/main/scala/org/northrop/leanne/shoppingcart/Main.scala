@@ -10,11 +10,20 @@ object Main {
   private val till = Till(prices, offers)
   private val scanner = Till.scan(till)_
 
+  def printReceipt(cart: Cart, total: Int) : Unit = {
+    def priceStr(price: Double) : String = f"${price}%.2f".reverse.padTo(6," ").mkString.reverse
+    def itemStr(item: String) : String = item.padTo(30,".").mkString
+    println(cart.contents.map(product => s"${itemStr(product.name)} ${priceStr(till.price(product).getOrElse(0) / 100d)}" ).mkString("\n"))
+    println(s"${itemStr("Total")} ${priceStr(total/100d)}")
+  }
+    
   def run(cartContents: String) : Unit = {
-      val (unknownProducts, cart) = Cart(cartContents)
-      val (errors, total) = scanner(cart)
-      println(f"Total = ${total/100d}%.2f")
-      if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n") + "\n" + unknownProducts.map(_.getMessage()).mkString("\n"))
+    val (unknownProducts, cart) = Cart(cartContents)
+    val (errors, total) = scanner(cart)
+    printReceipt(cart, total)
+
+    val errs = errors ++ unknownProducts.map(_.getMessage())
+    if (errs != List.empty[String]) println("Errors = \n" + errs.mkString("\n"))
   } 
 
   def main(args: Array[String]) : Unit = args.length match {

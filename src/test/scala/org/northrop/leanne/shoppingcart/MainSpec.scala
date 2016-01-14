@@ -33,7 +33,13 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("something-to-buy, , top")
-      val expectedMsg = "Total = 0.00\n"
+      val expectedMsg = """
+                          |Total.........................   0.00
+                          |Errors = 
+                          |requirement failed: Bad product name: something-to-buy
+                          |requirement failed: Bad product name: 
+                          |requirement failed: Bad product name: top
+                          |""".stripMargin
 
       // do it
       Console.withOut(stream) {
@@ -48,7 +54,15 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("apple, apple, something, , orange, apple")
-      val expectedMsg = "Total = 1.45\n"
+      val expectedMsg = """apple.........................   0.60
+                          |apple.........................   0.60
+                          |orange........................   0.25
+                          |apple.........................   0.60
+                          |Total.........................   1.45
+                          |Errors = 
+                          |requirement failed: Bad product name: something
+                          |requirement failed: Bad product name: 
+                          |""".stripMargin
 
       // do it
       Console.withOut(stream) {
@@ -63,7 +77,12 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("something-to-buy", "extra-arg", "further-arg")
-      val expectedMsg = "Total = 0.00\nDon't know what to do with additional arguments: extra-arg, further-arg\n"
+      val expectedMsg = """
+                          |Total.........................   0.00
+                          |Errors = 
+                          |requirement failed: Bad product name: something-to-buy
+                          |Don't know what to do with additional arguments: extra-arg, further-arg
+                          |""".stripMargin
 
       // do it
       Console.withOut(stream) {
@@ -78,7 +97,13 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("apple, pear, orange", "extra-arg", "further-arg")
-      val expectedMsg = "Total = 0.85\nDon't know what to do with additional arguments: extra-arg, further-arg\n"
+      val expectedMsg = """apple.........................   0.60
+                          |orange........................   0.25
+                          |Total.........................   0.85
+                          |Errors = 
+                          |requirement failed: Bad product name: pear
+                          |Don't know what to do with additional arguments: extra-arg, further-arg
+                          |""".stripMargin
 
       // do it
       Console.withOut(stream) {
@@ -93,7 +118,16 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("apple, strawberry, pear, orange, strawberry")
-      val expectedMsg = "Total = 0.85\nErrors = \nNo price for product Product(strawberry).\nNo price for product Product(strawberry).\nrequirement failed: Bad product name: pear\n"
+      val expectedMsg = """apple.........................   0.60
+                          |strawberry....................   0.00
+                          |orange........................   0.25
+                          |strawberry....................   0.00
+                          |Total.........................   0.85
+                          |Errors = 
+                          |No price for product Product(strawberry).
+                          |No price for product Product(strawberry).
+                          |requirement failed: Bad product name: pear
+                          |""".stripMargin
 
       // do it
       Console.withOut(stream) {
@@ -108,7 +142,17 @@ class MainSpec extends UnitSpec {
       // setup
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("apple, strawberry, pear, orange, strawberry", "extra-arg", "further-arg")
-      val expectedMsg = "Total = 0.85\nErrors = \nNo price for product Product(strawberry).\nNo price for product Product(strawberry).\nrequirement failed: Bad product name: pear\nDon't know what to do with additional arguments: extra-arg, further-arg\n"
+      val expectedMsg = """apple.........................   0.60
+                          |strawberry....................   0.00
+                          |orange........................   0.25
+                          |strawberry....................   0.00
+                          |Total.........................   0.85
+                          |Errors = 
+                          |No price for product Product(strawberry).
+                          |No price for product Product(strawberry).
+                          |requirement failed: Bad product name: pear
+                          |Don't know what to do with additional arguments: extra-arg, further-arg
+                          |""".stripMargin
 
       // do it
       Console.withOut(stream) {
