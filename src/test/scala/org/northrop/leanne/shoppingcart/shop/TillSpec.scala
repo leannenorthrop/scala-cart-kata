@@ -70,54 +70,6 @@ class TillSpec extends UnitSpec {
       total shouldBe 119
   }
 
-  "Till lookupOfferDiscount" should "return None if no offers apply" taggedAs(OfInterest) in new TillWithOffersObjects {
-      // do it
-      val offerOption = till.lookupOfferDiscount(TillState(List.empty[Product], List.empty[Product], List.empty[String], 0), Product("apple"))
-
-      // check
-      offerOption shouldBe None
-  }
-
-  "Till lookupOfferDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
-      // set up
-      val tillState = TillState(List.fill(2)(Product("apple")), List.fill(2)(Product("apple")), List.empty[String], 0)
-
-      // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
-
-      // check
-      discountInPence shouldBe -applePrice
-  }
-
-  "Till lookupOfferDiscount" should "return new state if offer applies" in new TillWithOffersObjects {
-      // set up
-      val tillState = TillState(List.fill(2)(Product("apple")), List.fill(2)(Product("apple")), List.empty[String], 0)
-
-      // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
-
-      // check
-      newState.seenNonOfferProducts shouldBe empty
-  }
-
-  "TillState" should "initialise with lists and total price in pence" in {
-      // set up
-      val runningTotalInPence = 976
-      val runningSeenNonDiscountedProducts = Product("apple") :: Product("orange") :: Nil
-      val runningSeenProducts = Product("apple") :: Product("apple") :: Product("apple") :: Product("orange") :: Nil
-
-      // do it
-      val state = TillState(runningSeenProducts, 
-                            runningSeenNonDiscountedProducts,
-                            List.empty[String], 
-                            runningTotalInPence)
-  
-      // check
-      state.totalInPence shouldBe runningTotalInPence
-      state.seenNonOfferProducts shouldBe runningSeenNonDiscountedProducts
-      state.seenProducts shouldBe runningSeenProducts
-  }
-
   "Till scan" should "apply all offers to cart contents" in new TillWithOffersObjects {
       // setup
       val cartContents = "apple, abc, orange, apple, orange, orange, orange, apple"
@@ -140,17 +92,5 @@ class TillSpec extends UnitSpec {
 
       // check
       errors shouldBe List("No price for product Product(orange).")
-  }
-
-  "TillState apply" should "return new state with discounted products removed from non offer products seen list" in {
-      // setup
-      val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-      val tillState = TillState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
-
-      // do it
-      val newState = tillState(threeFor2OrangesOffer)
-
-      // check
-      newState.seenNonOfferProducts shouldBe empty
   }
 }

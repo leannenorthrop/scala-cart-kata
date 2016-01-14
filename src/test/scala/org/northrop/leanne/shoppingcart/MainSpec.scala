@@ -101,8 +101,7 @@ class MainSpec extends UnitSpec {
       }
 
       // check
-      println(stream.toString)
-      //stream.toString shouldBe expectedMsg
+      stream.toString shouldBe expectedMsg
   }
 
   "Main entry point" should "print errors and warning for additional parameters" in new MainObject {

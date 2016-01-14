@@ -4,7 +4,7 @@ import org.northrop.leanne._
 import scala.collection.immutable._
 
 /**
-    Behaviour tests for org.northrop.leanne.shoppingcart.shop.
+    Behaviour tests for org.northrop.leanne.shoppingcart.shop.Offer
 */
 class OfferSpec extends UnitSpec {
   "Offer" should "initial with name and condition" in {
@@ -22,7 +22,7 @@ class OfferSpec extends UnitSpec {
   "Offer isApplicable" should "return true if till state fulfills offer conditions" in {
     // setup
     val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-    val tillState = TillState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
+    val tillState = TillScannerState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
 
     // do it
     val isApplicable = threeFor2OrangesOffer.isApplicable(tillState)
@@ -34,7 +34,7 @@ class OfferSpec extends UnitSpec {
   "Offer isApplicable" should "return false if till state does not fulfill offer condition" in {
     // setup
     val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-    val tillState = TillState(List.empty[Product], List.empty[Product], List.empty[String], 0)
+    val tillState = TillScannerState(List.empty[Product], List.empty[Product], List.empty[String], 0)
 
     // do it
     val isApplicable = threeFor2OrangesOffer.isApplicable(tillState)

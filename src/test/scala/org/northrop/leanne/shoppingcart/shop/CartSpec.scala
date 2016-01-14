@@ -25,4 +25,15 @@ class CartSpec extends UnitSpec {
       // check
       cart.contents shouldBe List(None, Some(Product("apple")), None, Some(Product("orange")), None)
   }
+
+  "Cart items" should "return list of products" in {
+      // setup
+      val itemsToBuy = "something, apple, , orange, an unknown thing"
+
+      // do it
+      val cart = Cart(itemsToBuy)
+
+      // check
+      cart.items shouldBe List(Product("apple"), Product("orange"))
+  }
 }

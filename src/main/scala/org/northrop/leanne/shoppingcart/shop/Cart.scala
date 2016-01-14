@@ -3,7 +3,9 @@ package org.northrop.leanne.shoppingcart.shop
 import scala.collection.immutable._
 import scala.util._
 
-case class Cart(val contents : List[Option[Product]])
+case class Cart(val contents : List[Option[Product]]) {
+  def items():List[Product] = contents.filter(_!=None).map(_.get)
+}
 
 object Cart {
 
