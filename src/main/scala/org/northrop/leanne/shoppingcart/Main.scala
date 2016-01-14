@@ -11,9 +11,10 @@ object Main {
   private val scanner = Till.scan(till)_
 
   def run(cartContents: String) : Unit = {
-      val (errors, total) = scanner(Cart(cartContents)._2)
+      val (unknownProducts, cart) = Cart(cartContents)
+      val (errors, total) = scanner(cart)
       println(f"Total = ${total/100d}%.2f")
-      if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n"))
+      if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n") + "\n" + unknownProducts.map(_.getMessage()).mkString("\n"))
   } 
 
   def main(args: Array[String]) : Unit = args.length match {
