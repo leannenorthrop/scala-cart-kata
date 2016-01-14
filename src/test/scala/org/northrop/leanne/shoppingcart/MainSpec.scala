@@ -34,7 +34,7 @@ class MainSpec extends UnitSpec {
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("something-to-buy, , top")
       val expectedMsg = """
-                          |Total.........................   0.00
+                          |Total including any offers....   0.00
                           |Errors = 
                           |requirement failed: Bad product name: something-to-buy
                           |requirement failed: Bad product name: 
@@ -58,7 +58,7 @@ class MainSpec extends UnitSpec {
                           |apple.........................   0.60
                           |orange........................   0.25
                           |apple.........................   0.60
-                          |Total.........................   1.45
+                          |Total including any offers....   1.45
                           |Errors = 
                           |requirement failed: Bad product name: something
                           |requirement failed: Bad product name: 
@@ -78,7 +78,7 @@ class MainSpec extends UnitSpec {
       val stream = new java.io.ByteArrayOutputStream()
       val args = Array[String]("something-to-buy", "extra-arg", "further-arg")
       val expectedMsg = """
-                          |Total.........................   0.00
+                          |Total including any offers....   0.00
                           |Errors = 
                           |requirement failed: Bad product name: something-to-buy
                           |Don't know what to do with additional arguments: extra-arg, further-arg
@@ -99,7 +99,7 @@ class MainSpec extends UnitSpec {
       val args = Array[String]("apple, pear, orange", "extra-arg", "further-arg")
       val expectedMsg = """apple.........................   0.60
                           |orange........................   0.25
-                          |Total.........................   0.85
+                          |Total including any offers....   0.85
                           |Errors = 
                           |requirement failed: Bad product name: pear
                           |Don't know what to do with additional arguments: extra-arg, further-arg
@@ -122,7 +122,7 @@ class MainSpec extends UnitSpec {
                           |strawberry....................   0.00
                           |orange........................   0.25
                           |strawberry....................   0.00
-                          |Total.........................   0.85
+                          |Total including any offers....   0.85
                           |Errors = 
                           |No price for product Product(strawberry).
                           |No price for product Product(strawberry).
@@ -146,7 +146,7 @@ class MainSpec extends UnitSpec {
                           |strawberry....................   0.00
                           |orange........................   0.25
                           |strawberry....................   0.00
-                          |Total.........................   0.85
+                          |Total including any offers....   0.85
                           |Errors = 
                           |No price for product Product(strawberry).
                           |No price for product Product(strawberry).
