@@ -8,6 +8,6 @@ case class Cart(val contents: List[Product])
 object Cart {
   def apply(productsCSV: String) : (List[Throwable], Cart) = {
     val (knownProducts, badProducts) = productsCSV.split(",").map((name) => Try[Product](Product(name.trim))).partition(_.isSuccess)
-    (badProducts.toList.map(_.failed.get), new Cart(knownProducts.map(_.get).toList))
+    (badProducts.toList.map(_.failed.get), Cart(knownProducts.map(_.get).toList))
   }
 }

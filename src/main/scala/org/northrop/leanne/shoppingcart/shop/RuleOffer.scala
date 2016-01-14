@@ -10,20 +10,20 @@ object RuleOffer {
   }
 
   def update(offer: Offer)(s: TillScannerState) : TillScannerState = {
-    def removeOfferItems() = offer.conditions.foldLeft(List.empty[Product]){ 
-        (seenNonOfferProducts, offerCondition) =>  
-        val (thisOfferProducts, nonOfferProducts) = s.itemsSeenNotInOffers.partition(_ == offerCondition._1)
-        thisOfferProducts.drop(offerCondition._2) ++ nonOfferProducts ++ seenNonOfferProducts
+    def dropOfferItems() = offer.conditions.foldLeft(List.empty[Product]){ 
+        (nonOfferProductsList, productOffer) =>  
+        val (product, numberOfOfferProducts) = productOffer
+        val (thisOfferProducts, nonOfferProducts) = s.itemsSeenNotInOffers.partition(_ == product)
+        thisOfferProducts.drop(numberOfOfferProducts) ++ nonOfferProducts ++ nonOfferProductsList
       }
-    val newItemsSeenNotInOffers = removeOfferItems()
+    val newItemsSeenNotInOffers = dropOfferItems()
     if (newItemsSeenNotInOffers == s.itemsSeenNotInOffers) s else s.copy(itemsSeenNotInOffers = newItemsSeenNotInOffers)
   }
 
   def isApplicable(offer: Offer)(s: TillScannerState) : Boolean = {
     val offerItemsInCart = s.itemsSeenNotInOffers.groupBy(_.name).filterKeys(offer.conditions contains Product(_))
     if (offerItemsInCart.isEmpty) false
-    else offerItemsInCart.forall { 
-      (productMapEntry) => 
+    else offerItemsInCart.forall { (productMapEntry) => 
       val (productName, list) = productMapEntry
       (list.length / (offer.conditions(Product(productName)))) >= 1
     }

@@ -4,11 +4,13 @@ import org.northrop.leanne.shoppingcart.shop._
 import scala.collection.immutable._
 
 object Main {
-  private val prices = Map(Product("apple")->60, Product("orange")->25)
-  private val offers = Offer("Apples ~ Buy 1 Get 1 Free", Map(Product("apple")->2), -60) :: 
-                       Offer("Oranges ~ 3 for Price of 2", Map(Product("orange")->3), -25) :: Nil
-  private val till = Till(prices, offers)
-  private val scanner = Till.scan(till)_
+  val till = {
+    // Would be nice to be able to pass prices and offers list in as arguments to main but it wasn't mentioned in requirements
+    val prices = Map(Product("apple")->60, Product("orange")->25)
+    val offers = List(Offer("Apples ~ Buy 1 Get 1 Free", Map(Product("apple")->2), -60),
+                      Offer("Oranges ~ 3 for Price of 2", Map(Product("orange")->3), -25))
+    Till(prices, offers)
+  }
 
   def printReceipt(cart: Cart, total: Int) : Unit = {
     def priceStr(price: Double) : String = f"${price}%.2f".reverse.padTo(6," ").mkString.reverse
@@ -19,7 +21,7 @@ object Main {
 
   def run(cartContents: String) : Unit = {
     val (unknownProducts, cart) = Cart(cartContents)
-    val (errors, total) = scanner(cart)
+    val (errors, total) = till.purchase(cart)
     printReceipt(cart, total)
 
     val errs = errors ++ unknownProducts.map(_.getMessage())
