@@ -1,6 +1,6 @@
 package org.northrop.leanne.shoppingcart.shop
 
-import org.northrop.leanne.UnitSpec
+import org.northrop.leanne._
 import scala.collection.immutable._
 
 /**
@@ -80,9 +80,9 @@ class TillSpec extends UnitSpec {
       total shouldBe 119
   }
 
-  "Till lookupOfferDiscount" should "return None if no offers apply" in new TillWithOffersObjects {
+  "Till lookupOfferDiscount" should "return None if no offers apply" taggedAs(OfInterest) in new TillWithOffersObjects {
       // do it
-      val offerOption = till.lookupOfferDiscount(TillState(Nil, Nil, List.empty[String], 0), Product("apple"))
+      val offerOption = till.lookupOfferDiscount(TillState(List.empty[Product], List.empty[Product], List.empty[String], 0), Product("apple"))
 
       // check
       offerOption shouldBe None
@@ -90,9 +90,7 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
       // set up
-      val allProductsSeen = Product("apple") :: Product("apple") :: Nil
-      val discountedProductsSeen = Product("apple") :: Nil
-      val tillState = TillState(allProductsSeen, discountedProductsSeen, List.empty[String], 0)
+      val tillState = TillState(List.fill(2)(Product("apple")), List.fill(2)(Product("apple")), List.empty[String], 0)
 
       // do it
       val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
@@ -103,9 +101,7 @@ class TillSpec extends UnitSpec {
 
   "Till lookupOfferDiscount" should "return new state if offer applies" in new TillWithOffersObjects {
       // set up
-      val allProductsSeen = Product("apple") :: Product("apple") :: Nil
-      val discountedProductsSeen = Product("apple") :: Nil
-      val tillState = TillState(allProductsSeen, discountedProductsSeen, List.empty[String], 0)
+      val tillState = TillState(List.fill(2)(Product("apple")), List.fill(2)(Product("apple")), List.empty[String], 0)
 
       // do it
       val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))

@@ -17,20 +17,19 @@ case class TillState(val seenProducts: List[Product],
   }
 }
 
-case class Till(val prices : List[ProductPrice], val offers: List[Offer]) {
-  def lookupPrice(product : Product) : Option[Int] = prices.find(_.product.name == product.name).map(_.priceInPence)
+case class Till(val prices: List[ProductPrice], val offers: List[Offer]) {
+  def lookupPrice(product: Product) : Option[Int] = prices.find(_.product.name == product.name).map(_.priceInPence)
   
-  def findOffers(product : Product) : List[Offer] = offers.filter(_.conditions contains product)
+  def findOffers(product: Product) : List[Offer] = offers.filter(_.conditions contains product)
   
-  def lookupOfferDiscount(state : TillState, product : Product) : Option[(TillState,Int)] = {
-    val updatedState = state.copy(seenNonOfferProducts = product :: state.seenNonOfferProducts)
-    findOffers(product).find(_.isApplicable(updatedState)).map(offer => ( updatedState(offer), offer.discountInPence) )
+  def lookupOfferDiscount(state: TillState, product: Product) : Option[(TillState,Int)] = {
+    findOffers(product).find(_.isApplicable(state)).map(offer => ( state(offer), offer.discountInPence) )
   }
 }
 
 
 object Till {
-  def scan(till:Till)(cart:Cart) : (List[String], Int) = {
+  def scan(till: Till)(cart: Cart) : (List[String], Int) = {
     val cartContents = cart.contents.filter(_!=None).map(_.get)
 
     val initialRunningState = TillState(List.empty[Product], List.empty[Product], List.empty[String], 0)
@@ -38,14 +37,14 @@ object Till {
     val finalState = cartContents.foldLeft( initialRunningState ) { 
       (runningState,product) =>
 
-      val (newRunningState,discountInPence) = till.lookupOfferDiscount(runningState, product).getOrElse((runningState.copy(seenNonOfferProducts = product :: runningState.seenNonOfferProducts), 0))
-      val productPriceOption = till.lookupPrice(product).map(_ + discountInPence)
-      val updatedErrors = if (productPriceOption == None) s"No price for product $product." :: runningState.errors else runningState.errors
-      val newTotal = runningState.totalInPence + productPriceOption.getOrElse(0)
+      val nextRunningOfferState = runningState.copy(seenProducts = product :: runningState.seenProducts,
+                                                    seenNonOfferProducts = product :: runningState.seenNonOfferProducts)
 
-      newRunningState.copy(seenProducts = (product :: runningState.seenProducts),
-                           totalInPence = newTotal,
-                           errors = updatedErrors)
+      val (offerAppliedRunningState,discountInPence) = till.lookupOfferDiscount(nextRunningOfferState, product).getOrElse(nextRunningOfferState, 0)
+      val productPriceOption = till.lookupPrice(product).map(_ + discountInPence)
+
+      offerAppliedRunningState.copy(totalInPence = runningState.totalInPence + productPriceOption.getOrElse(0),
+                                    errors = productPriceOption.map(_ => runningState.errors).getOrElse(s"No price for product $product." :: runningState.errors))
     }
 
     (finalState.errors, finalState.totalInPence)
