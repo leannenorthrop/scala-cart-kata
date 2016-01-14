@@ -9,7 +9,7 @@ import scala.collection.immutable._
 class CartSpec extends UnitSpec {
   "Cart" should "initialise with list of Products" in {
       // setup
-      val contents = Some(Product("apple")) :: Some(Product("orange")) :: List()
+      val contents = List(Product("apple"),Product("orange"))
 
       // check
       Cart(contents).contents shouldBe contents
@@ -20,20 +20,22 @@ class CartSpec extends UnitSpec {
       val itemsToBuy = "something, apple, , orange, an unknown thing"
 
       // do it
-      val cart = Cart(itemsToBuy)
+      val (errors, cart) = Cart(itemsToBuy)
 
       // check
-      cart.contents shouldBe List(None, Some(Product("apple")), None, Some(Product("orange")), None)
+      cart.contents shouldBe List(Product("apple"), Product("orange"))
   }
 
-  "Cart items" should "return list of products" in {
+  "Cart apply" should "return list of Throwables for unknown Products" in {
       // setup
       val itemsToBuy = "something, apple, , orange, an unknown thing"
 
       // do it
-      val cart = Cart(itemsToBuy)
+      val (errors, cart) = Cart(itemsToBuy)
 
       // check
-      cart.items shouldBe List(Product("apple"), Product("orange"))
+      errors contains (new IllegalArgumentException("requirement failed: Bad product name: something"))
+      errors contains (new IllegalArgumentException("requirement failed: Bad product name:  "))
+      errors contains (new IllegalArgumentException("requirement failed: Bad product name: an unknown thing"))
   }
 }

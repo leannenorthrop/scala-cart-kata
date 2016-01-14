@@ -11,7 +11,7 @@ object Main {
   private val scanner = Till.scan(till)_
 
   def run(cartContents: String) : Unit = {
-      val (errors, total) = scanner(Cart(cartContents))
+      val (errors, total) = scanner(Cart(cartContents)._2)
       println(f"Total = ${total/100d}%.2f")
       if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n"))
   } 

@@ -61,7 +61,7 @@ class TillSpec extends UnitSpec {
   "Till scan" should "return total value of known products" in new TillObjects {
       // setup
       val cartContents = "apple, abc, orange, , apple, apple"
-      val cart = Cart(cartContents)
+      val cart = Cart(cartContents)._2
 
       // do it
       val (_, total) = scanner(cart)
@@ -73,7 +73,7 @@ class TillSpec extends UnitSpec {
   "Till scan" should "apply all offers to cart contents" taggedAs(OfInterest) in new TillWithOffersObjects {
       // setup
       val cartContents = "apple, abc, orange, apple, orange, orange, orange, apple"
-      val cart = Cart(cartContents)
+      val cart = Cart(cartContents)._2
 
       // do it
       val (_, total) = scanner(cart)
@@ -85,7 +85,7 @@ class TillSpec extends UnitSpec {
   "Till scan" should "return error for valid products without prices" in new TillWithoutOrangePriceObjects {
       // setup
       val cartContents = "apple, abc, orange, apple, apple"
-      val cart = Cart(cartContents)
+      val cart = Cart(cartContents)._2
 
       // do it
       val (errors, _) = scanner(cart)

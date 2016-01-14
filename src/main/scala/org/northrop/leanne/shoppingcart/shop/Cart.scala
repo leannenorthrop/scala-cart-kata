@@ -3,11 +3,11 @@ package org.northrop.leanne.shoppingcart.shop
 import scala.collection.immutable._
 import scala.util._
 
-case class Cart(val contents: List[Option[Product]]) {
-  def items() : List[Product] = contents.filter(_!=None).map(_.get)
-}
+case class Cart(val contents: List[Product])
 
 object Cart {
-  // Todo: Error list of unknown products
-  def apply(productsCSV: String) : Cart = new Cart(productsCSV.split(",").map((name) => Try[Product](Product(name.trim)).toOption).toList)
+  def apply(productsCSV: String) : (List[Throwable], Cart) = {
+    val (knownProducts, badProducts) = productsCSV.split(",").map((name) => Try[Product](Product(name.trim))).partition(_.isSuccess)
+    (badProducts.toList.map(_.failed.get), new Cart(knownProducts.map(_.get).toList))
+  }
 }

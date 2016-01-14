@@ -8,11 +8,10 @@ case class TillScannerState(val itemsSeen: List[Product],
                             val totalInPence: Int) {
 
   def purchase(till: Till)(product: Product) : TillScannerState = {
-    val me = this
-    val offerOption = till.offers.find(RuleOffer(_).isApplicable(me)).map(RuleOffer(_))
-    val discountInPence = offerOption.map(_.discount(me).getOrElse(0)).getOrElse(0)
+    val offerOption = till.offers.find(RuleOffer(_).isApplicable(this)).map(RuleOffer(_))
+    val discountInPence = offerOption.map(_.discount(this).getOrElse(0)).getOrElse(0)
     val discountedPriceOption = till.price(product).map(_ + discountInPence)
-    offerOption.map(_.update(me)).getOrElse(me).copy(totalInPence = totalInPence + discountedPriceOption.getOrElse(0), errors = discountedPriceOption.map(_ => errors).getOrElse(s"No price for product $product." :: errors))
+    offerOption.map(_.update(this)).getOrElse(this).copy(totalInPence = totalInPence + discountedPriceOption.getOrElse(0), errors = discountedPriceOption.map(_ => errors).getOrElse(s"No price for product $product." :: errors))
   }
 
   def scan(till: Till)(product: Product) : TillScannerState = {
