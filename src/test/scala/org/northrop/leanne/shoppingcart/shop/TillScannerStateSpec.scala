@@ -46,58 +46,6 @@ class TillScannerStateSpec extends UnitSpec {
       state.errors shouldBe Nil
   }
 
-  "TillScannerState isApplicable" should "return true if till state fulfills offer conditions" in new TillWithOffersObjects {
-    // setup
-    val tillState = TillScannerState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
-
-    // do it
-    val isApplicable = tillState.isApplicable(offers.head)
-
-    // check
-    isApplicable shouldBe true
-  }
-   
-  "TillScannerState isApplicable" should "return false if till state does not fulfill offer condition" in new TillWithOffersObjects {
-    // setup
-    val tillState = TillScannerState(List.empty[Product], List.empty[Product], List.empty[String], 0)
-
-    // do it
-    val isApplicable = tillState.isApplicable(offers.head)
-
-    // check
-    isApplicable shouldBe false
-  }
-
-  "TillScannerState apply" should "return new state with only discounted products removed from itemsSeenNotInOffers" in {
-      // setup
-      val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-      val nonOfferItems = List.fill(3)(Product("strawberry")) ++ List.fill(3)(Product("apple"))
-      val allItems = nonOfferItems ++ List.fill(3)(Product("orange"))
-      val tillState = TillScannerState(allItems, allItems, List.empty[String], -22)
-
-      // do it
-      val newState = tillState(threeFor2OrangesOffer)
-
-      // check
-      newState.itemsSeenNotInOffers shouldBe nonOfferItems
-      newState.itemsSeen shouldBe allItems
-      newState.totalInPence shouldBe -22
-      newState.errors shouldBe empty
-  }
-
-  "TillScannerState apply" should "return itself if no offers apply" in {
-      // setup
-      val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-      val allItems = List.fill(3)(Product("strawberry")) ++ List.fill(3)(Product("apple"))
-      val tillState = TillScannerState(allItems, allItems, List.empty[String], -22)
-
-      // do it
-      val newState = tillState(threeFor2OrangesOffer)
-
-      // check
-      newState shouldBe tillState
-  }
-
   "TillScannerState scan" should "return new totalInPence if price exists for product" in new TillWithOffersObjects {
       // setup
       val allItems = List.fill(3)(Product("strawberry"))
