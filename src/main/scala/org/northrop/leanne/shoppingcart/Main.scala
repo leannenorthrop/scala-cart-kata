@@ -4,7 +4,7 @@ import org.northrop.leanne.shoppingcart.shop._
 import scala.collection.immutable._
 
 object Main {
-  private val prices = ProductPrice(Product("apple"), 60) :: ProductPrice(Product("orange"), 25) :: Nil
+  private val prices = Map(Product("apple")->60, Product("orange")->25)
   private val offers = Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -60) :: 
                        Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25) :: Nil
   private val till = Till(prices, offers)

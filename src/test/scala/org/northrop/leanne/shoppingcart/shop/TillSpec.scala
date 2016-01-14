@@ -8,14 +8,14 @@ import scala.collection.immutable._
 */
 class TillSpec extends UnitSpec {
   trait TillWithoutOrangePriceObjects {
-    val prices = ProductPrice(Product("apple"), 33) :: Nil
+    val prices = Map(Product("apple")->33)
     val offers = List.empty[Offer]
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
   }
 
   trait TillObjects {
-    val prices = ProductPrice(Product("apple"), 33) :: ProductPrice(Product("orange"), 20) :: Nil
+    val prices = Map(Product("apple") -> 33, Product("orange")->20)
     val offers = List.empty[Offer]
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
@@ -24,21 +24,11 @@ class TillSpec extends UnitSpec {
   trait TillWithOffersObjects {
     val applePrice = 33
     val orangePrice = 20
-    val prices = ProductPrice(Product("apple"), applePrice) :: ProductPrice(Product("orange"), orangePrice) :: Nil
+    val prices = Map(Product("apple") -> applePrice, Product("orange") -> orangePrice)
     val offers = Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -applePrice) :: 
                  Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -orangePrice) :: Nil
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
-  }
-
-  "ProductPrice" should "initialise with Product and price in pence value" in {
-      // setup
-      val name = "apple"
-      val productPrice = ProductPrice(Product(name), 100)
-
-      // check
-      productPrice.product.name shouldBe name
-      productPrice.priceInPence shouldBe 100
   }
 
   "Till" should "initialise with List of ProductPrices" in new TillObjects {

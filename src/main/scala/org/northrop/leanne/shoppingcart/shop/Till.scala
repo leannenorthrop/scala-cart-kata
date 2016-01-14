@@ -17,8 +17,8 @@ case class TillState(val seenProducts: List[Product],
   }
 }
 
-case class Till(val prices: List[ProductPrice], val offers: List[Offer]) {
-  def lookupPrice(product: Product) : Option[Int] = prices.find(_.product.name == product.name).map(_.priceInPence)
+case class Till(val prices: Map[Product,Int], val offers: List[Offer]) {
+  def lookupPrice(product: Product) : Option[Int] = prices.get(product)
   
   def findOffers(product: Product) : List[Offer] = offers.filter(_.conditions contains product)
   
