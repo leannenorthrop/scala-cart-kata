@@ -3,8 +3,7 @@ package org.northrop.leanne.shoppingcart.shop
 import scala.collection.immutable._
 
 case class Till(val prices: Map[Product,Int], val offers: List[Offer]) {
-  def lookupPrice(product: Product) : Option[Int] = prices.get(product)
-  def findOffers(product: Product) : List[Offer] = offers.filter(_.conditions contains product)
+  def price(product: Product) : Option[Int] = prices.get(product)
 }
 
 object Till {

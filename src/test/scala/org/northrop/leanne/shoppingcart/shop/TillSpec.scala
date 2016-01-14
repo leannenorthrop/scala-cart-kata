@@ -36,23 +36,23 @@ class TillSpec extends UnitSpec {
       till.prices shouldBe prices
   }
 
-  "Till lookupPrice" should "return Some price in pence value for a known Product" in new TillObjects {
+  "Till price" should "return Some price in pence value for a known Product" in new TillObjects {
       // setup
       val product = Product("apple")
 
       // do it
-      val priceOption = till.lookupPrice(product)
+      val priceOption = till.price(product)
 
       // check
       priceOption shouldBe Some(33)
   }
 
-  "Till lookupPrice" should "return None for a unknown Product" in new TillWithoutOrangePriceObjects {
+  "Till price" should "return None for a unknown Product" in new TillWithoutOrangePriceObjects {
       // setup
       val product = Product("orange")
 
       // do it
-      val priceOption = till.lookupPrice(product)
+      val priceOption = till.price(product)
 
       // check
       priceOption shouldBe None

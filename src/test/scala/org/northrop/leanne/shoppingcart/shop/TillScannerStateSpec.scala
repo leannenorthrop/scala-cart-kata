@@ -68,51 +68,6 @@ class TillScannerStateSpec extends UnitSpec {
     isApplicable shouldBe false
   }
 
-  "TillScannerState findOffer" should "find first offer that applies for itemsSeenNotInOffers if it exists" in new TillWithOffersObjects {
-      // setup
-      val tillState = TillScannerState(List.empty[Product], List.fill(4)(Product("apple")), List.empty[String], 0)
-
-      // do it
-      val offerOption = tillState.findOffer(till)(Product("apple"))
-  
-      // check
-      offerOption should not be None
-      offerOption.get.name shouldBe "Apples ~ Buy 1 Get 1 Free"
-  }
-
-  "TillScannerState findOffer" should "return None if no offer exists" in new TillWithOffersObjects {
-      // setup
-      val tillState = TillScannerState(List.empty[Product], List.fill(4)(Product("strawberry")), List.empty[String], 0)
-
-      // do it
-      val offerOption = tillState.findOffer(till)(Product("apple"))
-  
-      // check
-      offerOption shouldBe None
-  }
-
-  "TillScannerState lookupDiscount" should "return None if no offers apply" taggedAs(OfInterest) in new TillWithOffersObjects {
-      // setup
-      val tillState = TillScannerState(List.empty[Product], List.empty[Product], List.empty[String], 0)
-
-      // do it
-      val offerOption = tillState.lookupDiscount(till)(Product("strawberry"))
-
-      // check
-      offerOption shouldBe None
-  }
-
-  "TillScannerState lookupDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
-      // setup
-      val tillState = TillScannerState(List.empty[Product], List.fill(4)(Product("apple")), List.empty[String], 0)
-
-      // do it
-      val discountInPence = tillState.lookupDiscount(till)(Product("apple")).getOrElse(-1)
-
-      // check
-      discountInPence shouldBe -applePrice
-  }
-
   "TillScannerState apply" should "return new state with only discounted products removed from itemsSeenNotInOffers" in {
       // setup
       val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)

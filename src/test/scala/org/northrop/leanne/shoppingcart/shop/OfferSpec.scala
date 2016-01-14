@@ -18,28 +18,4 @@ class OfferSpec extends UnitSpec {
       offer.conditions shouldBe condition
       offer.discountInPence shouldBe -33
   }
-
-  "Offer isApplicable" should "return true if till state fulfills offer conditions" in {
-    // setup
-    val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-    val tillState = TillScannerState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
-
-    // do it
-    val isApplicable = threeFor2OrangesOffer.isApplicable(tillState)
-
-    // check
-    isApplicable shouldBe true
-  }
-   
-  "Offer isApplicable" should "return false if till state does not fulfill offer condition" in {
-    // setup
-    val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-    val tillState = TillScannerState(List.empty[Product], List.empty[Product], List.empty[String], 0)
-
-    // do it
-    val isApplicable = threeFor2OrangesOffer.isApplicable(tillState)
-
-    // check
-    isApplicable shouldBe false
-  }
 }

@@ -6,10 +6,6 @@ case class TillScannerState(val itemsSeen: List[Product],
                             val itemsSeenNotInOffers: List[Product],
                             val errors: List[String],
                             val totalInPence: Int) {
-  
-  def findOffer(till: Till)(product: Product) : Option[Offer] = till.findOffers(product).find(_.isApplicable(this))
-
-  def lookupDiscount(till: Till)(product: Product) : Option[Int] = findOffer(till)(product).map(_.discountInPence)
 
   def isApplicable(offer: Offer) : Boolean = {
     val offerItemsInCart = itemsSeenNotInOffers.groupBy(_.name).filterKeys(offer.conditions contains Product(_))
@@ -32,8 +28,9 @@ case class TillScannerState(val itemsSeen: List[Product],
   }
 
   def purchase(till: Till)(product: Product) : TillScannerState = {
-    val discountedPriceOption = till.lookupPrice(product).map(_ + lookupDiscount(till)(product).getOrElse(0))
-    findOffer(till)(product).map(apply(_)).getOrElse(this).copy(totalInPence = totalInPence + discountedPriceOption.getOrElse(0), errors = discountedPriceOption.map(_ => errors).getOrElse(s"No price for product $product." :: errors))
+    val offerOption = till.offers.find(isApplicable(_))
+    val discountedPriceOption = till.price(product).map(_ + offerOption.map(_.discountInPence).getOrElse(0))
+    offerOption.map(apply(_)).getOrElse(this).copy(totalInPence = totalInPence + discountedPriceOption.getOrElse(0), errors = discountedPriceOption.map(_ => errors).getOrElse(s"No price for product $product." :: errors))
   }
 
   def scan(till: Till)(product: Product) : TillScannerState = {

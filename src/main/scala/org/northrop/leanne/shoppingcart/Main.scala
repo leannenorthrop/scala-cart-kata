@@ -5,8 +5,8 @@ import scala.collection.immutable._
 
 object Main {
   private val prices = Map(Product("apple")->60, Product("orange")->25)
-  private val offers = Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -60) :: 
-                       Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25) :: Nil
+  private val offers = Offer("Apples ~ Buy 1 Get 1 Free", Map(Product("apple")->2), -60) :: 
+                       Offer("Oranges ~ 3 for Price of 2", Map(Product("orange")->3), -25) :: Nil
   private val till = Till(prices, offers)
   private val scanner = Till.scan(till)_
 
