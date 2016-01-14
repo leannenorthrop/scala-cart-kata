@@ -70,7 +70,7 @@ class TillSpec extends UnitSpec {
       total shouldBe 119
   }
 
-  "Till scan" should "apply all offers to cart contents" in new TillWithOffersObjects {
+  "Till scan" should "apply all offers to cart contents" taggedAs(OfInterest) in new TillWithOffersObjects {
       // setup
       val cartContents = "apple, abc, orange, apple, orange, orange, orange, apple"
       val cart = Cart(cartContents)

@@ -7,25 +7,21 @@ import scala.collection.immutable._
     Behaviour tests for org.northrop.leanne.shoppingcart.shop.TillScannerState
 */
 class TillScannerStateSpec extends UnitSpec {
-  trait TillWithoutOrangePriceObjects {
-    val prices = Map(Product("apple")->33)
-    val offers = List.empty[Offer]
-    val till = Till(prices, offers)
-    val scanner = Till.scan(till)_
-  }
-
-  trait TillObjects {
-    val prices = Map(Product("apple") -> 33, Product("orange")->20)
-    val offers = List.empty[Offer]
-    val till = Till(prices, offers)
-    val scanner = Till.scan(till)_
-  }
-
   trait TillWithOffersObjects {
     val applePrice = 33
     val orangePrice = 20
     val prices = Map(Product("apple") -> applePrice, Product("orange") -> orangePrice)
     val offers = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -orangePrice) ::
+                 Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -applePrice) :: Nil
+    val till = Till(prices, offers)
+    val scanner = Till.scan(till)_
+  }
+
+  trait TillWithDiscountedOrangesObjects {
+    val applePrice = 33
+    val orangePrice = 20
+    val prices = Map(Product("apple") -> applePrice, Product("orange") -> orangePrice)
+    val offers = Offer("Oranges ~ 3 for Price of 2.5", ListMap(Product("orange")->3), -10) ::
                  Offer("Apples ~ Buy 1 Get 1 Free", ListMap(Product("apple")->2), -applePrice) :: Nil
     val till = Till(prices, offers)
     val scanner = Till.scan(till)_
@@ -95,44 +91,90 @@ class TillScannerStateSpec extends UnitSpec {
       offerOption shouldBe None
   }
 
-  /*
-    "Till lookupOfferDiscount" should "return new state if offer applies" in new TillWithOffersObjects {
-      // set up
-      val tillState = TillScannerState(List.fill(2)(Product("apple")), List.fill(2)(Product("apple")), List.empty[String], 0)
+  "TillScannerState lookupDiscount" should "return None if no offers apply" taggedAs(OfInterest) in new TillWithOffersObjects {
+      // setup
+      val tillState = TillScannerState(List.empty[Product], List.empty[Product], List.empty[String], 0)
 
       // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(tillState, Product("apple")).getOrElse((tillState,0))
-
-      // check
-      newState.itemsSeenNotInOffers shouldBe empty
-  }
-  */
-
-  /*"Till lookupOfferDiscount" should "return None if no offers apply" taggedAs(OfInterest) in new TillWithOffersObjects {
-      // do it
-      val offerOption = till.lookupOfferDiscount(Product("apple"))
+      val offerOption = tillState.lookupDiscount(till)(Product("strawberry"))
 
       // check
       offerOption shouldBe None
   }
 
-  "Till lookupOfferDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
+  "TillScannerState lookupDiscount" should "return discount in pence if offer applies" in new TillWithOffersObjects {
+      // setup
+      val tillState = TillScannerState(List.empty[Product], List.fill(4)(Product("apple")), List.empty[String], 0)
+
       // do it
-      val (newState, discountInPence) = till.lookupOfferDiscount(Product("apple")).getOrElse((tillState,0))
+      val discountInPence = tillState.lookupDiscount(till)(Product("apple")).getOrElse(-1)
 
       // check
       discountInPence shouldBe -applePrice
-  }*/
+  }
 
-  "TillScannerState apply" should "return new state with discounted products removed from non offer products seen list" in {
+  "TillScannerState apply" should "return new state with only discounted products removed from itemsSeenNotInOffers" in {
       // setup
       val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
-      val tillState = TillScannerState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
+      val nonOfferItems = List.fill(3)(Product("strawberry")) ++ List.fill(3)(Product("apple"))
+      val allItems = nonOfferItems ++ List.fill(3)(Product("orange"))
+      val tillState = TillScannerState(allItems, allItems, List.empty[String], -22)
 
       // do it
       val newState = tillState(threeFor2OrangesOffer)
 
       // check
-      newState.itemsSeenNotInOffers shouldBe empty
+      newState.itemsSeenNotInOffers shouldBe nonOfferItems
+      newState.itemsSeen shouldBe allItems
+      newState.totalInPence shouldBe -22
+      newState.errors shouldBe empty
+  }
+
+  "TillScannerState apply" should "return itself if no offers apply" in {
+      // setup
+      val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
+      val allItems = List.fill(3)(Product("strawberry")) ++ List.fill(3)(Product("apple"))
+      val tillState = TillScannerState(allItems, allItems, List.empty[String], -22)
+
+      // do it
+      val newState = tillState(threeFor2OrangesOffer)
+
+      // check
+      newState shouldBe tillState
+  }
+
+  "TillScannerState scan" should "return new totalInPence if price exists for product" in new TillWithOffersObjects {
+      // setup
+      val allItems = List.fill(3)(Product("strawberry"))
+      val tillState = TillScannerState(allItems, allItems, List.empty[String], 0)
+
+      // do it
+      val newState = tillState.scan(till)(Product("apple"))
+
+      // check
+      newState.totalInPence shouldBe applePrice
+  }
+
+  "TillScannerState scan" should "return new totalInPence with discount applied if price and applicable offer exists for product" in new TillWithDiscountedOrangesObjects {
+      // setup
+      val allItems = List.fill(3)(Product("strawberry")) ++ List.fill(2)(Product("orange"))
+      val tillState = TillScannerState(allItems, allItems, List.empty[String], orangePrice*2)
+
+      // do it
+      val newState = tillState.scan(till)(Product("orange"))
+
+      // check
+      newState.totalInPence shouldBe 50
+  }
+
+  "TillScannerState scan 2 apples" should "return price of one apple" in new TillWithOffersObjects {
+      // setup
+      val tillState = TillScannerState(List.empty[Product], List.empty[Product], List.empty[String], 0)
+
+      // do it
+      val newState = tillState.scan(till)(Product("apple")).scan(till)(Product("apple"))
+
+      // check
+      newState.totalInPence shouldBe applePrice
   }
 }
