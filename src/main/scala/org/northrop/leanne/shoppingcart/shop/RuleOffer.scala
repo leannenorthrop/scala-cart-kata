@@ -21,11 +21,11 @@ object RuleOffer {
   }
 
   def isApplicable(offer: Offer)(s: TillScannerState) : Boolean = {
-    val offerItemsInCart = s.itemsSeenNotInOffers.groupBy(_.name).filterKeys(offer.conditions contains Product(_))
-    if (offerItemsInCart.isEmpty) false
-    else offerItemsInCart.forall { (productMapEntry) => 
-      val (productName, list) = productMapEntry
-      (list.length / (offer.conditions(Product(productName)))) >= 1
+    val cartItemsIncludedInOffer = s.itemsSeenNotInOffers.groupBy(_.name).filterKeys(offer.conditions contains Product(_))
+    if (cartItemsIncludedInOffer.isEmpty) false
+    else cartItemsIncludedInOffer.forall { (itemsOnOffer) => 
+      val (name, items) = itemsOnOffer
+      (items.length / (offer.conditions(Product(name)))) >= 1
     }
   }
 
