@@ -80,18 +80,6 @@ class TillSpec extends UnitSpec {
       total shouldBe 119
   }
 
-  "Offer" should "initial with name and condition" in {
-      // setup
-      val name = "Apples ~ Buy 1 Get 1 Free"
-      val condition = Map(Product("apple") -> 2)
-      val offer = Offer(name, condition, -33)
-
-      // check
-      offer.name shouldBe name
-      offer.conditions shouldBe condition
-      offer.discountInPence shouldBe -33
-  }
-
   "Till lookupOfferDiscount" should "return None if no offers apply" in new TillWithOffersObjects {
       // do it
       val offerOption = till.lookupOfferDiscount(TillState(Nil, Nil, List.empty[String], 0), Product("apple"))
@@ -166,5 +154,17 @@ class TillSpec extends UnitSpec {
 
       // check
       errors shouldBe List("No price for product Product(orange).")
+  }
+
+  "TillState apply" should "return new state with discounted products removed from non offer products seen list" in {
+      // setup
+      val threeFor2OrangesOffer = Offer("Oranges ~ 3 for Price of 2", ListMap(Product("orange")->3), -25)
+      val tillState = TillState(List.empty[Product], List.fill(3)(Product("orange")), List.empty[String], 0)
+
+      // do it
+      val newState = tillState(threeFor2OrangesOffer)
+
+      // check
+      newState.seenNonOfferProducts shouldBe empty
   }
 }

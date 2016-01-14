@@ -9,3 +9,5 @@ object Product {
 
   def isKnown(name : String) : Boolean = validProducts.contains(name.toLowerCase)
 }
+
+case class ProductPrice(val product : Product, val priceInPence : Int)
