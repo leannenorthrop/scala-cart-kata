@@ -10,13 +10,13 @@ object Main {
   private val till = Till(prices, offers)
   private val scanner = Till.scan(till)_
 
-  def run(cartContents : String) : Unit = {
+  def run(cartContents: String) : Unit = {
       val (errors, total) = scanner(Cart(cartContents))
       println(f"Total = ${total/100d}%.2f")
       if (errors != List.empty[String]) println("Errors = \n" + errors.mkString("\n"))
   } 
 
-  def main(args : Array[String]): Unit = args.length match {
+  def main(args: Array[String]) : Unit = args.length match {
     case 0 => println("""Usage:
               |scala org.northrop.leanne.shoppingcart.Main 'comma separated list of products to purchase'
               |""".stripMargin)
