@@ -2,10 +2,10 @@ package org.northrop.leanne.shoppingcart.shop
 
 import scala.collection.immutable._
 
-case class TillScannerState(val itemsSeen: List[Product], 
-                            val itemsSeenNotInOffers: List[Product],
-                            val errors: List[String],
-                            val totalInPence: Int) {
+case class TillScannerState(val itemsSeen: List[Product] = List.empty[Product], 
+                            val itemsSeenNotInOffers: List[Product] = List.empty[Product],
+                            val errors: List[String] = List.empty[String],
+                            val totalInPence: Int = 0) {
 
   def purchase(till: Till)(product: Product) : TillScannerState = {
     val offerOption = till.offers.find(RuleOffer(_).isApplicable(this)).map(RuleOffer(_))
